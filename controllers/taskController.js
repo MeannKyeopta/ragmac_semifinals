@@ -1,12 +1,12 @@
-// controllers/itemController.js
-const items = require("../models/itemModel");
+// controllers/taskController.js
+const task = require("../models/taskModel");
 
-// Get all items
-const getAllItems = async (req, res) => {
+// Get all task
+const getAlltask = async (req, res) => {
   try {
     res
       .status(200)
-      .json({ message: "Items retrieved successfully", data: items });
+      .json({ message: "task retrieved successfully", data: task });
   } catch (error) {
     res
       .status(500)
@@ -14,17 +14,31 @@ const getAllItems = async (req, res) => {
   }
 };
 
-// Get a specific item by ID
-const getItemById = async (req, res) => {
+// Add a new task
+const addtask = async (req, res) => {
+  try {
+    const newtask = req.body;
+    task.push(newtask);
+    res.status(201).json({ message: "task added successfully", data: task });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "An error occurred", error: error.message });
+  }
+};
+
+// Update an existing task
+const updatetask = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const item = items.find((item) => item.id === id);
-    if (item) {
+    const index = task.findIndex((task) => task.id === id);
+    if (index !== -1) {
+      task[index] = { ...task[index], ...req.body };
       res
         .status(200)
-        .json({ message: "Item retrieved successfully", data: item });
+        .json({ message: "task updated successfully", data: task });
     } else {
-      res.status(404).json({ message: "Item not found" });
+      res.status(404).json({ message: "task not found" });
     }
   } catch (error) {
     res
@@ -33,51 +47,18 @@ const getItemById = async (req, res) => {
   }
 };
 
-// Add a new item
-const addItem = async (req, res) => {
-  try {
-    const newItem = req.body;
-    items.push(newItem);
-    res.status(201).json({ message: "Item added successfully", data: items });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "An error occurred", error: error.message });
-  }
-};
-
-// Update an existing item
-const updateItem = async (req, res) => {
+// Delete an task
+const deletetask = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const index = items.findIndex((item) => item.id === id);
+    const index = task.findIndex((task) => task.id === id);
     if (index !== -1) {
-      items[index] = { ...items[index], ...req.body };
+      task.splice(index, 1);
       res
         .status(200)
-        .json({ message: "Item updated successfully", data: items });
+        .json({ message: "task deleted successfully", data: task });
     } else {
-      res.status(404).json({ message: "Item not found" });
-    }
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "An error occurred", error: error.message });
-  }
-};
-
-// Delete an item
-const deleteItem = async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    const index = items.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      items.splice(index, 1);
-      res
-        .status(200)
-        .json({ message: "Item deleted successfully", data: items });
-    } else {
-      res.status(404).json({ message: "Item not found" });
+      res.status(404).json({ message: "task not found" });
     }
   } catch (error) {
     res
@@ -87,9 +68,8 @@ const deleteItem = async (req, res) => {
 };
 
 module.exports = {
-  getAllItems,
-  getItemById,
-  addItem,
-  updateItem,
-  deleteItem,
-};gi
+  getAlltask,
+  addtask,
+  updatetask,
+  deletetask,
+};
